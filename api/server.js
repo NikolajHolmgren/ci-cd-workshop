@@ -15,32 +15,45 @@ const Name = mongoose.model('Name', nameSchema);
 
 // POST endpoint to add a new name
 app.post('/api/names', (req, res) => {
+  console.log(`[POST] /api/names called with body: ${JSON.stringify(req.body)}`);
   const newName = new Name({ name: req.body.name });
   newName.save()
-    .then(() => res.status(201).send('Name added'))
-    .catch(err => res.status(400).json(err));
+    .then(() => {
+      console.log(`Name "${req.body.name}" added to database`);
+      res.status(201).send('Name added');
+    })
+    .catch(err => {
+      console.error('Error adding name:', err);
+      res.status(400).json(err);
+    });
 });
 
 // GET endpoint to fetch all names
 app.get('/api/names', (req, res) => {
+  console.log('[GET] /api/names called');
   Name.find()
-    .then(names => res.json(names))
-    .catch(err => res.status(500).json(err));
+    .then(names => {
+      console.log(`Returned ${names.length} names`);
+      res.json(names);
+    })
+    .catch(err => {
+      console.error('Error fetching names:', err);
+      res.status(500).json(err);
+    });
 });
 
-// Get health check endpoint
+// Health check endpoint
 app.get('/api/hello', (req, res) => {
-  // TODO: Check that all services this one depends on are running.
-
+  console.log('[GET] /api/hello called');
   res.status(200).send("Hello, World!");
 });
 
 // Connect to MongoDB
-// TODO: You must change the connectionstring to MongoDB when deploying in docker compose
 mongoose.connect('mongodb://127.0.0.1:27017/mydatabase')
-  .then(() => console.log('MongoDB connected...'))
-  .catch(err => console.log(err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
+// Start server
 app.listen(port, () => {
-    console.log(`API server listening on port ${port}`);
+  console.log(`🚀 API server listening on port ${port}`);
 });
