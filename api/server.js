@@ -5,7 +5,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 
 // Schema for the Name
 const nameSchema = new mongoose.Schema({
